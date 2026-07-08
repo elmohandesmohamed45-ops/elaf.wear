@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>إِلَافَ Store</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700;800&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Tajawal', sans-serif; background-color: #F5F1EB; color: #111; transition: all 0.3s; }
+        a { text-decoration: none; color: inherit; }
+        .navbar { background: #F5F1EB; padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .nav-right { display: flex; align-items: center; gap: 40px; }
+        .nav-links { display: flex; gap: 30px; font-weight: 700; font-size: 15px; letter-spacing: 1px; }
+        .nav-links a:hover { color: #5D4037; }
+        .search-box input { width: 250px; padding: 10px 20px; border: 1px solid #E8E0D5; border-radius: 50px; font-family: 'Tajawal'; font-size: 14px; outline: none; background: #EDE8E0; }
+        .cart-icon { position: relative; cursor: pointer; font-size: 24px; transition: 0.3s; }
+        .cart-icon:hover { transform: scale(1.1); }
+        .cart-count { position: absolute; top: -8px; right: -8px; background: #3E2723; color: #fff; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .logo-text { font-family: 'Amiri', serif; color: #3E2723; font-size: 38px; font-weight: 700; cursor: pointer; margin-left: 30px; }
+        .lang-btn { background: #3E2723; color: #fff; border: none; padding: 8px 15px; border-radius: 20px; font-family: 'Tajawal'; font-weight: 700; font-size: 13px; cursor: pointer; }
+        .lang-btn:hover { background: #5D4037; }
+
+        .hero { width: 100%; height: 80vh; background-color: #F5F1EB; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .hero img { max-width: 50%; height: auto; animation: fadeInScale 1.5s ease forwards; filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.05)); }
+        @keyframes fadeInScale { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        .products-grid { max-width: 1300px; margin: 60px auto; padding: 0 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; }
+        .product-card { background: #FAF8F5; cursor: pointer; overflow: hidden; transition: all 0.4s ease; border: 1px solid #E8E0D5; opacity: 0; transform: translateY(50px); }
+        .product-card.animate { animation: slideUp 0.6s ease forwards; }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+        .product-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(62, 39, 35, 0.05); border-color: transparent; }
+        .product-img-wrap { overflow: hidden; position: relative; }
+        .product-img-wrap img { width: 100%; height: 350px; object-fit: cover; transition: transform 0.6s ease; }
+        .product-card:hover .product-img-wrap img { transform: scale(1.04); }
+        .discount-badge { position: absolute; top: 15px; left: 15px; background: #3E2723; color: #fff; padding: 5px 10px; font-size: 12px; font-weight: 800; border-radius: 4px; }
+        .product-details { padding: 25px; text-align: center; }
+        .product-name { font-size: 18px; font-weight: 700; margin-bottom: 12px; color: #3E2723; }
+        .price-box { display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .current-price { font-size: 20px; font-weight: 800; color: #3E2723; }
+        .old-price { font-size: 15px; color: #999; text-decoration: line-through; }
+
+        #product-page { display: none; padding-top: 40px; min-height: 100vh; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .back-link { display: inline-block; margin-bottom: 30px; font-weight: 700; color: #3E2723; border-bottom: 2px solid #3E2723; padding-bottom: 2px; cursor:pointer; }
+        .back-link:hover { color: #5D4037; border-color: #5D4037; }
+        .pp-container { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; gap: 60px; }
+        .pp-images { flex: 1; }
+        .pp-images img { width: 100%; height: 600px; object-fit: cover; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .pp-info { flex: 1; padding-top: 20px; }
+        .pp-title { font-size: 28px; font-weight: 800; margin-bottom: 15px; color: #3E2723; }
+        .pp-price-box { margin-bottom: 30px; display: flex; align-items: center; gap: 15px; }
+        .pp-current-price { font-size: 30px; font-weight: 800; color: #3E2723; }
+        .pp-old-price { font-size: 18px; color: #999; text-decoration: line-through; }
+        .option-label { font-weight: 700; margin-bottom: 12px; font-size: 15px; display: block; }
+        .color-options { display: flex; gap: 15px; margin-bottom: 30px; }
+        .c-btn { width: 35px; height: 35px; border-radius: 50%; border: 2px solid #FAF8F5; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; transition: 0.3s; outline: none; }
+        .c-btn.active { border-color: #3E2723; transform: scale(1.2); box-shadow: 0 0 0 2px #3E2723; }
+        .size-options { display: flex; gap: 10px; margin-bottom: 40px; flex-wrap: wrap; }
+        .s-btn { padding: 12px 20px; border: 2px solid #E8E0D5; background: transparent; font-family: 'Tajawal'; font-size: 15px; font-weight: 700; cursor: pointer; border-radius: 6px; transition: 0.3s; color: #3E2723; }
+        .s-btn.active { background: #3E2723; color: #fff; border-color: #3E2723; }
+        .action-buttons { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+        .btn-atc { width: 100%; padding: 18px; background: transparent; border: 2px solid #3E2723; color: #3E2723; font-family: 'Tajawal'; font-size: 18px; font-weight: 800; cursor: pointer; border-radius: 8px; transition: 0.3s; }
+        .btn-atc:hover { background: #EDE8E0; }
+        .btn-buy { width: 100%; padding: 18px; background: #3E2723; border: 2px solid #3E2723; color: #fff; font-family: 'Tajawal'; font-size: 18px; font-weight: 800; cursor: pointer; border-radius: 8px; transition: 0.3s; }
+        .btn-buy:hover { background: #5D4037; border-color: #5D4037; }
+        .size-chart-toggle { font-size: 14px; text-decoration: underline; cursor: pointer; color: #5D4037; margin-bottom: 20px; }
+        .size-chart-box { background: #EDE8E0; padding: 20px; border-radius: 8px; margin-bottom: 30px; display: none; font-size: 14px; line-height: 1.8; }
+        .recommended { max-width: 1200px; margin: 80px auto 0; padding: 0 40px 60px; }
+        .rec-title { font-size: 24px; font-weight: 800; margin-bottom: 30px; border-bottom: 2px solid #3E2723; padding-bottom: 10px; display: inline-block; color: #3E2723; }
+        .rec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; }
+        .rec-card { cursor: pointer; transition: 0.3s; }
+        .rec-card:hover { transform: translateY(-3px); }
+        .rec-card img { width: 100%; height: 250px; object-fit: cover; border-radius: 6px; margin-bottom: 10px; }
+        .rec-name { font-weight: 700; font-size: 14px; color: #3E2723; }
+        .rec-price { font-weight: 800; color: #3E2723; }
+
+        .sidebar { position: fixed; top: 0; left: 0; width: 400px; height: 100%; background: #FAF8F5; box-shadow: 10px 0 30px rgba(62, 39, 35, 0.1); transform: translateX(-100%); transition: transform 0.4s ease; z-index: 2000; display: flex; flex-direction: column; }
+        .sidebar.open { transform: translateX(0); }
+        .sidebar-header { padding: 25px; border-bottom: 1px solid #E8E0D5; display: flex; justify-content: space-between; align-items: center; font-size: 20px; font-weight: 800; color: #3E2723; }
+        .close-btn { background: none; border: none; font-size: 30px; cursor: pointer; color: #3E2723; }
+        .cart-items { flex: 1; overflow-y: auto; padding: 20px; }
+        .cart-item { display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #E8E0D5; align-items: center; position: relative; }
+        .cart-item img { width: 70px; height: 90px; object-fit: cover; border-radius: 8px; }
+        .cart-item-details { flex: 1; }
+        .cart-item-details h4 { font-size: 15px; margin-bottom: 5px; color: #3E2723; }
+        .cart-item-meta { font-size: 12px; color: #777; margin-bottom: 5px; display: flex; gap: 10px; align-items: center; }
+        .qty-controls { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+        .qty-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #E8E0D5; background: transparent; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: 'Tajawal'; font-weight: bold; color: #3E2723; }
+        .qty-btn:hover { background: #E8E0D5; }
+        .qty-val { font-weight: 800; font-size: 16px; min-width: 20px; text-align: center; }
+        .remove-btn { color: #e74c3c; cursor: pointer; background: none; border: none; font-size: 13px; font-family: 'Tajawal'; text-decoration: underline; position: absolute; top: 0; left: 0; }
+        .sidebar-footer { padding: 25px; border-top: 1px solid #E8E0D5; }
+        .total { font-size: 18px; font-weight: 800; margin-bottom: 20px; display: flex; justify-content: space-between; color: #3E2723; }
+        .checkout-btn { width: 100%; padding: 15px; background: #3E2723; color: #fff; border: none; font-family: 'Tajawal'; font-size: 16px; font-weight: 700; cursor: pointer; border-radius: 8px; }
+        .checkout-btn:hover { background: #5D4037; }
+        
+        .modal-base { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #FAF8F5; padding: 40px; border-radius: 12px; z-index: 3000; width: 90%; max-width: 500px; display: none; box-shadow: 0 20px 50px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; }
+        .modal-base.show { display: block; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 14px; color: #3E2723; }
+        .form-group input { width: 100%; padding: 15px; border: 1px solid #E8E0D5; border-radius: 8px; font-family: 'Tajawal'; font-size: 15px; outline: none; background: #F5F1EB; }
+        .pay-options { display: flex; gap: 15px; margin-bottom: 10px; }
+        .pay-option { flex: 1; cursor: pointer; }
+        .pay-option input { display: none; }
+        .pay-box { padding: 15px; border: 2px solid #E8E0D5; border-radius: 8px; text-align: center; font-weight: 700; transition: 0.3s; color: #3E2723; font-size: 14px; }
+        .pay-option input:checked + .pay-box { border-color: #3E2723; background: #3E2723; color: #fff; }
+        .success-msg { position: fixed; top: 20px; right: 20px; background: #3E2723; color: #fff; padding: 15px 25px; border-radius: 8px; z-index: 5000; display: none; font-weight: 700; }
+        #overlay { position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(62,39,35,0.5);z-index:1500;display:none; }
+        
+        /* تنسيق صفحة اتصل بنا */
+        .contact-info p { margin-bottom: 15px; font-size: 16px; line-height: 1.6; color: #555; }
+        .contact-info strong { color: #3E2723; }
+        .contact-phone { font-size: 28px; font-weight: 800; color: #3E2723; direction: ltr; display: inline-block; margin-top: 10px; text-decoration: underline; text-underline-offset: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="nav-right">
+            <div class="logo-text">إِلَافَ</div>
+            <div class="search-box" id="searchBoxMain"><input type="text" id="searchInput" onkeyup="search()" data-i18n-ph="search" placeholder="Search here..."></div>
+            <button class="lang-btn" id="lang-btn" onclick="switchLang()">العربية</button>
+        </div>
+        <div class="nav-right">
+            <div class="nav-links">
+                <a href="#" onclick="showShop()" data-i18n="home">HOME</a>
+                <a href="#" onclick="showShop()" data-i18n="shop">SHOP</a>
+                <a href="#" onclick="openContact()" data-i18n="contact">CONTACT US</a>
+            </div>
+            <div class="cart-icon" onclick="openCart()">🛒<div id="cart-count" class="cart-count">0</div></div>
+        </div>
+    </div>
+
+    <div id="shop-view">
+        <div class="hero">
+            <img src="https://z-cdn-media.chatglm.cn/files/a6b96b49-d082-4aeb-a908-113783631e8a.png?auth_key=1883524914-1497258116ee4d9db37d44980095778f-0-9cbc2afbad90e9b165b6fecdefb0477d" alt="هي!">
+        </div>
+        <div id="products" class="products-grid"></div>
+    </div>
+
+    <div id="product-page">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 40px;"><div class="back-link" onclick="showShop()" data-i18n="back">← Back to Shop</div></div>
+        <div class="pp-container">
+            <div class="pp-images"><img id="pp-img" src=""></div>
+            <div class="pp-info">
+                <h1 class="pp-title" id="pp-name"></h1>
+                <div class="pp-price-box"><span class="pp-current-price" id="pp-price"></span><span class="pp-old-price" id="pp-old-price" style="display:none;"></span></div>
+                <span class="option-label" data-i18n="color">COLOR</span>
+                <div class="color-options" id="pp-colors"></div>
+                <span class="option-label" data-i18n="size">SIZE</span>
+                <div class="size-options" id="pp-sizes"></div>
+                <div class="action-buttons">
+                    <button class="btn-atc" onclick="addToCartPage()" data-i18n="addCart">ADD TO CART</button>
+                    <button class="btn-buy" onclick="buyNowPage()" data-i18n="buyNow">BUY IT NOW</button>
+                </div>
+                <div class="size-chart-toggle" onclick="toggleChart()" data-i18n="sizeChart">SIZE CHART ▼</div>
+                <div class="size-chart-box" id="sizeChart"></div>
+            </div>
+        </div>
+        <div class="recommended">
+            <div class="rec-title" data-i18n="youMayLike">YOU MAY ALSO LIKE</div>
+            <div class="rec-grid" id="rec-grid"></div>
+        </div>
+    </div>
+
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header"> <span data-i18n="cartTitle">Shopping Cart</span> <button class="close-btn" onclick="closeCart()">&times;</button></div>
+        <div id="cart-items" class="cart-items"></div>
+        <div class="sidebar-footer">
+            <div class="total"><span data-i18n="total">Total</span> <span id="total-price">0 EGP</span></div>
+            <button class="checkout-btn" onclick="openCheckout()" data-i18n="checkout">CHECKOUT</button>
+        </div>
+    </div>
+    <div id="overlay" onclick="closeCart()"></div>
+
+    <!-- نافذة الدفع -->
+    <div id="checkout-modal" class="modal-base">
+        <h3 style="margin-bottom:25px; font-size:22px; color:#3E2723;" data-i18n="checkoutTitle">Complete Your Order</h3>
+        <div class="form-group">
+            <label data-i18n="payMethod">Payment Method</label>
+            <div class="pay-options">
+                <label class="pay-option"><input type="radio" name="payMethod" value="Cash" checked><div class="pay-box">💵 <span data-i18n="cash">Cash on Delivery</span></div></label>
+                <label class="pay-option"><input type="radio" name="payMethod" value="InstaPay"><div class="pay-box">📱 InstaPay</div></label>
+            </div>
+        </div>
+        <div class="form-group"><label data-i18n="name">Full Name</label><input type="text" id="c_name" data-i18n-ph="namePh" placeholder="Ahmed Mohamed"></div>
+        <div class="form-group"><label data-i18n="phone">Phone Number</label><input type="text" id="c_phone" data-i18n-ph="phonePh" placeholder="01000000000"></div>
+        <div class="form-group"><label data-i18n="address">Detailed Address</label><input type="text" id="c_address" data-i18n-ph="addressPh" placeholder="Governorate - Area - Street"></div>
+        <button class="checkout-btn" onclick="submitOrder()" data-i18n="confirm">Confirm Order</button>
+    </div>
+
+    <!-- نافذة اتصل بنا -->
+    <div id="contact-modal" class="modal-base" style="text-align:center;">
+        <h3 style="margin-bottom:10px; color:#3E2723; font-size:24px;" data-i18n="contactTitle">Get In Touch</h3>
+        <p style="color:#555; margin-bottom:20px;">تواصل معنا عن طريق هذا الرقم ياه منا بالتأكيد</p>
+        <a href="tel:+201007794219" class="contact-phone">+20 100 779 4219</a>
+        <br><br>
+        <button class="checkout-btn" onclick="closeContact()" style="background:transparent; color:#3E2723; border:2px solid #3E2723;">Close</button>
+    </div>
+
+    <div id="success-msg" class="success-msg" data-i18n="success">Added to cart ✓</div>
+
+    <script>
+        function fixColor(c) { if(!c) return "#000000"; var map = { 'اسود': '#000000', 'أسود': '#000000', 'black': '#000000', 'ابيض': '#FFFFFF', 'أبيض': '#FFFFFF', 'white': '#FFFFFF', 'بيج': '#F5F1EB', 'beige': '#F5F1EB', 'رمادي': '#808080', 'grey': '#808080', 'gray': '#808080', 'احمر': '#FF0000', 'أحمر': '#FF0000', 'red': '#FF0000', 'وردي': '#FFC0CB', 'pink': '#FFC0CB', 'بني': '#3E2723', 'brown': '#3E2723', 'سماوي': '#87CEEB', 'blue': '#0000FF', 'أزرق': '#0000FF', 'اخضر': '#008000', 'أخضر': '#008000', 'green': '#008000', 'موف': '#E0B0FF', 'purple': '#800080', 'بنفسجي': '#800080' }; var cleanC = c.trim().toLowerCase(); return map[cleanC] || c.trim(); }
+
+        var currentLang = 'en';
+        var translations = { en: { home: "HOME", shop: "SHOP", contact: "CONTACT US", search: "Search here...", back: "← Back to Shop", color: "COLOR", size: "SIZE", addCart: "ADD TO CART", buyNow: "BUY IT NOW", sizeChart: "SIZE CHART ▼", chartContent: "<strong>S:</strong> Chest 90cm | Length 68cm<br><strong>M:</strong> Chest 95cm | Length 70cm<br><strong>L:</strong> Chest 100cm | Length 72cm<br><strong>XL:</strong> Chest 105cm | Length 74cm", youMayLike: "YOU MAY ALSO LIKE", cartTitle: "Shopping Cart", emptyCart: "Cart is empty", total: "Total", checkout: "CHECKOUT", checkoutTitle: "Complete Your Order", payMethod: "Payment Method", cash: "Cash on Delivery", name: "Full Name", phone: "Phone Number", address: "Detailed Address", namePh: "Ahmed Mohamed", phonePh: "01000000000", addressPh: "Governorate - Area - Street", confirm: "Confirm Order", success: "Added to cart ✓", orderSuccess: "Order confirmed! We will contact you at ", currency: " EGP", contactTitle: "Get In Touch" }, ar: { home: "الرئيسية", shop: "المتجر", contact: "اتصل بنا", search: "ابحث هنا...", back: "→ العودة للمتجر", color: "اللون", size: "المقاس", addCart: "أضف للسلة", buyNow: "اشتري الآن", sizeChart: "جدول المقاسات ▼", chartContent: "<strong>S:</strong> الصدر 90 سم | الطول 68 سم<br><strong>M:</strong> الصدر 95 سم | الطول 70 سم<br><strong>L:</strong> الصدر 100 سم | الطول 72 سم<br><strong>XL:</strong> الصدر 105 سم | الطول 74 سم", youMayLike: "قد يعجبك أيضاً", cartTitle: "سلة المشتريات", emptyCart: "السلة فارغة", total: "الإجمالي", checkout: "إتمام الشراء", checkoutTitle: "أكمل طلبك", payMethod: "طريقة الدفع", cash: "كاش عند الاستلام", name: "الاسم بالكامل", phone: "رقم الهاتف", address: "العنوان بالتفصيل", namePh: "أحمد محمد", phonePh: "01000000000", addressPh: "المحافظة - المنطقة - الشارع", confirm: "تأكيد الطلب", success: "تمت الإضافة للسلة ✓", orderSuccess: "تم تأكيد طلبك بنجاح! هنتواصل معاك على ", currency: " ج.م", contactTitle: "تواصل معنا" } };
+
+        function switchLang() { currentLang = currentLang === 'en' ? 'ar' : 'en'; document.documentElement.lang = currentLang; document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr'; document.getElementById('lang-btn').innerText = currentLang === 'en' ? 'العربية' : 'English'; applyTranslations(); updateCart(); }
+        function applyTranslations() { var t = translations[currentLang]; document.querySelectorAll('[data-i18n]').forEach(function(el) { var key = el.getAttribute('data-i18n'); if (t[key]) el.innerText = t[key]; }); document.querySelectorAll('[data-i18n-ph]').forEach(function(el) { var key = el.getAttribute('data-i18n-ph'); if (t[key]) el.placeholder = t[key]; }); document.getElementById('sizeChart').innerHTML = t.chartContent; }
+
+        var db = JSON.parse(localStorage.getItem('site_products'));
+        if (!db || db.length == 0) { db = [ { id: 1, name: "BLACK PUFF TEE", price: 780, old_price: null, sizes: ["XS", "S", "M", "L"], colors: ["#000000"], img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800" }, { id: 2, name: "DOUBLE TROUBLE BLACK SHORTS", price: 750, old_price: 900, sizes: ["S", "M", "L", "XL"], colors: ["#000000", "#333333"], img: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800" }, { id: 3, name: "PINK PUFF TEE", price: 780, old_price: null, sizes: ["S", "M", "L"], colors: ["#FFC0CB", "#FFB6C1"], img: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800" }, { id: 4, name: "GREY WIDE LEG PANTS", price: 850, old_price: 1000, sizes: ["M", "L", "XL"], colors: ["#808080", "#000000"], img: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=800" } ]; }
+
+        var cart = []; var currentProd = null; var selColor = "", selSize = "";
+
+        function draw(arr) { var c = document.getElementById('products'); var h = ''; for(var i=0; i<arr.length; i++) { var p = arr[i]; var discountBadge = ''; var priceHtml = '<span class="current-price">'+p.price+translations[currentLang].currency+'</span>'; if(p.old_price && p.old_price > p.price) { var disc = Math.round(((p.old_price - p.price) / p.old_price) * 100); discountBadge = '<div class="discount-badge">-'+disc+'%</div>'; priceHtml += '<span class="old-price">'+p.old_price+translations[currentLang].currency+'</span>'; } h += '<div class="product-card" onclick="openProductPage('+p.id+')"><div class="product-img-wrap"><img src="'+p.img+'">'+discountBadge+'</div><div class="product-details"><div class="product-name">'+p.name+'</div><div class="price-box">'+priceHtml+'</div></div></div>'; } c.innerHTML = h; setTimeout(function() { var cards = document.querySelectorAll('.product-card'); cards.forEach(function(card, index) { setTimeout(function() { card.classList.add('animate'); }, index * 150); }); }, 100); }
+        function search() { var q = document.getElementById('searchInput').value.toLowerCase(); var f = []; for(var i=0; i<db.length; i++) { if(db[i].name.toLowerCase().includes(q)) f.push(db[i]); } draw(f); }
+        function showShop() { document.getElementById('shop-view').style.display = 'block'; document.getElementById('product-page').style.display = 'none'; document.getElementById('searchBoxMain').style.display = 'block'; window.scrollTo(0, 0); draw(db); }
+        function openContact() { document.getElementById('contact-modal').classList.add('show'); }
+        function closeContact() { document.getElementById('contact-modal').classList.remove('show'); }
+
+        function openProductPage(id) { for(var i=0; i<db.length; i++) { if(db[i].id == id) { currentProd = db[i]; break; } } if (typeof currentProd.colors === 'string') { currentProd.colors = currentProd.colors.split(',').map(function(c){ return c.trim(); }).filter(function(c){ return c.length > 0; }); } if(!currentProd.colors || currentProd.colors.length == 0) { currentProd.colors = ["#000000"]; } if (typeof currentProd.sizes === 'string') { currentProd.sizes = currentProd.sizes.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s.length > 0; }); } if(!currentProd.sizes || currentProd.sizes.length == 0) { currentProd.sizes = ["M", "L"]; } selColor = fixColor(currentProd.colors[0]); selSize = currentProd.sizes[0]; document.getElementById('pp-img').src = currentProd.img; document.getElementById('pp-name').innerText = currentProd.name; document.getElementById('pp-price').innerText = currentProd.price + translations[currentLang].currency; var oldP = document.getElementById('pp-old-price'); if(currentProd.old_price && currentProd.old_price > currentProd.price) { oldP.innerText = currentProd.old_price + translations[currentLang].currency; oldP.style.display = 'inline'; } else { oldP.style.display = 'none'; } var colHtml = ''; for(var i=0; i<currentProd.colors.length; i++) { var c = fixColor(currentProd.colors[i]); var act = c === selColor ? 'active' : ''; colHtml += '<button class="c-btn '+act+'" style="background-color:'+c+'" onclick="pickColor(\''+c+'\', this)"></button>'; } document.getElementById('pp-colors').innerHTML = colHtml; var sizeHtml = ''; for(var i=0; i<currentProd.sizes.length; i++) { var act = currentProd.sizes[i] === selSize ? 'active' : ''; sizeHtml += '<button class="s-btn '+act+'" onclick="pickSize(\''+currentProd.sizes[i]+'\', this)">'+currentProd.sizes[i]+'</button>'; } document.getElementById('pp-sizes').innerHTML = sizeHtml; var recs = []; for(var i=0; i<db.length; i++) { if(db[i].id !== id) { recs.push(db[i]); } } var recHtml = ''; for(var i=0; i<recs.length; i++) { recHtml += '<div class="rec-card" onclick="openProductPage('+recs[i].id+')"><img src="'+recs[i].img+'"><div class="rec-name">'+recs[i].name+'</div><div class="rec-price">'+recs[i].price+translations[currentLang].currency+'</div></div>'; } document.getElementById('rec-grid').innerHTML = recHtml; document.getElementById('shop-view').style.display = 'none'; document.getElementById('searchBoxMain').style.display = 'none'; document.getElementById('product-page').style.display = 'block'; window.scrollTo(0, 0); }
+        function toggleChart() { var chart = document.getElementById('sizeChart'); chart.style.display = chart.style.display === 'block' ? 'none' : 'block'; }
+        function pickColor(c, el) { selColor = c; var btns = document.getElementsByClassName('c-btn'); for(var i=0; i<btns.length; i++) btns[i].classList.remove('active'); el.classList.add('active'); }
+        function pickSize(s, el) { selSize = s; var btns = document.getElementsByClassName('s-btn'); for(var i=0; i<btns.length; i++) btns[i].classList.remove('active'); el.classList.add('active'); }
+
+        function addToCartPage() { var exists = false; for(var i=0; i<cart.length; i++) { if(cart[i].id === currentProd.id && cart[i].size === selSize && cart[i].color === selColor) { cart[i].qty += 1; exists = true; break; } } if(!exists) { cart.push({ id: currentProd.id, name: currentProd.name, price: currentProd.price, img: currentProd.img, size: selSize, color: selColor, qty: 1 }); } updateCart(); var msg = document.getElementById('success-msg'); msg.style.display = 'block'; setTimeout(function(){ msg.style.display = 'none'; }, 2000); }
+        function buyNowPage() { addToCartPage(); setTimeout(function(){ openCart(); }, 500); }
+        function changeQty(index, diff) { cart[index].qty += diff; if(cart[index].qty <= 0) { cart.splice(index, 1); } updateCart(); }
+        function updateCart() { var t = translations[currentLang]; var count = 0, total = 0, h = ''; for(var i=0; i<cart.length; i++) { count += cart[i].qty; total += (cart[i].price * cart[i].qty); h += '<div class="cart-item"><img src="'+cart[i].img+'"><div class="cart-item-details"><h4>'+cart[i].name+'</h4><div class="cart-item-meta">'+t.size+': '+cart[i].size+' | <span style="width:15px;height:15px;border-radius:50%;background:'+cart[i].color+';display:inline-block;border:1px solid #ccc;"></span></div><div class="qty-controls"><button class="qty-btn" onclick="changeQty('+i+', -1)">-</button><span class="qty-val">'+cart[i].qty+'</span><button class="qty-btn" onclick="changeQty('+i+', 1)">+</button></div></div><button class="remove-btn" onclick="changeQty('+i+', 0)">حذف</button></div>'; } if(cart.length == 0) { h = '<div style="text-align:center;color:#aaa;margin-top:50px;">'+t.emptyCart+'</div>'; } document.getElementById('cart-count').innerText = count; document.getElementById('cart-items').innerHTML = h; document.getElementById('total-price').innerText = total + t.currency; }
+        function openCart() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').style.display = 'block'; }
+        function closeCart() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').style.display = 'none'; document.getElementById('checkout-modal').classList.remove('show'); closeContact(); }
+        function openCheckout() { if(cart.length == 0) { alert(currentLang == 'en' ? "Cart is empty!" : "السلة فارغة!"); return; } document.getElementById('checkout-modal').classList.add('show'); }
+
+        function submitOrder() {
+            var n = document.getElementById('c_name').value, p = document.getElementById('c_phone').value, a = document.getElementById('c_address').value;
+            if(n==""||p==""||a=="") { alert(currentLang == 'en' ? "Please fill all data" : "من فضلك أكمل البيانات"); return; }
+            var payMethod = document.querySelector('input[name="payMethod"]:checked').value;
+            var orders = JSON.parse(localStorage.getItem('site_orders')) || [];
+            // هنا حفظت الوقت الحالي مع الطلب
+            orders.push({ name: n, phone: p, address: a, cart: cart, total: document.getElementById('total-price').innerText, payMethod: payMethod, timestamp: Date.now() });
+            localStorage.setItem('site_orders', JSON.stringify(orders));
+            cart = []; updateCart(); closeCart(); 
+            document.getElementById('c_name').value=""; document.getElementById('c_phone').value=""; document.getElementById('c_address').value="";
+            alert(translations[currentLang].orderSuccess + p);
+        }
+
+        applyTranslations();
+        document.getElementById('sizeChart').innerHTML = translations[currentLang].chartContent;
+        draw(db);
+    </script>
+</body>
+</html>
